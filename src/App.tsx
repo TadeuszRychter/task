@@ -92,7 +92,7 @@ function App() {
           </ul>
         </div>
         {selectedStates.map(state => <Widget
-          twoLetterCode={state}
+          fullStateName={sts[state]}
           { ...( selectedDataGroups.includes('demography') && {
             people: selectedDataItems
                       .filter(item => item.startsWith('demography_'))

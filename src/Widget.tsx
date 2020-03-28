@@ -1,16 +1,16 @@
 import React from 'react';
-import {TwoLetterCode} from "./data/s";
+import {FullStateName} from "./data/s";
 
 interface WidgetProps {
-  twoLetterCode: TwoLetterCode;
+  fullStateName: FullStateName;
   [key: string]: any; // TODO
 }
 
 function Widget(props: WidgetProps) {
-  const {twoLetterCode, people} = props;
+  const {fullStateName, people} = props;
 
   return <div style={{border: '1px solid green'}}>
-    <p>{twoLetterCode}</p>
+    <p>{fullStateName}</p>
     <p>{
       people ?
         Object.keys(people).length ?
