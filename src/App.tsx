@@ -25,11 +25,24 @@ const industries = Object.keys(jbs[0]).filter(key => key !== 'name');
 
 const demographicSegments = Object.keys(ppltn[0]).filter(key => key !== 'State');
 
+const appConfig = [
+  {
+    name: 'industry',
+    listType: 'A',
+    itemsList: industries
+  },
+  {
+    name: 'demography',
+    listType: 'I',
+    itemsList: demographicSegments
+  }
+];
+
 function App() {
 
   const [selectedStates, setSelectedStates] = useState<TwoLetterCode[]>([]);
   const [selectedDataGroups, setSelectedDataGroups] = useState<string[]>([]);
-  const [selectedDataItems, setSelectedDataItems] = useState<string[]>([]);
+  const [selectedDataItems, setSelectedDataItems] = useState<string[]>([]); // only one level of nesting...
 
   const clearSelectedDataItems = (groupName: string) => {
     setSelectedDataItems(selectedDataItems.filter(dataItem => !dataItem.startsWith(`${groupName}_`)));
@@ -60,18 +73,7 @@ function App() {
         <div>
           Select data:
           <ul>
-            {[
-              {
-                name: 'industry',
-                listType: 'A',
-                itemsList: industries
-              },
-              {
-                name: 'demography',
-                listType: 'I',
-                itemsList: demographicSegments
-              }
-            ].map(dataGroup => <li key={dataGroup.name}>
+            {appConfig.map(dataGroup => <li key={dataGroup.name}>
                 <DataGroupSelector
                   dataGroupName={dataGroup.name}
                   selectedDataGroups={selectedDataGroups}
@@ -89,7 +91,18 @@ function App() {
             )}
           </ul>
         </div>
-        {selectedStates.map(state => <Widget twoLetterCode={state} />)}
+        {selectedStates.map(state => <Widget
+          twoLetterCode={state}
+          { ...( selectedDataGroups.includes('demography') && {
+            people: selectedDataItems
+                      .filter(item => item.startsWith('demography_'))
+                      .map(item => item.replace("demography_", ""))
+                      .reduce((acc, key) => ({
+                        ...acc,
+                        ...( ppltn.find(item => item.State === state) && { [key]: (ppltn.find(item => item.State === state) as any)[key] } )
+                      }), {})
+          } ) }
+        />)}
 
         <p>demographicSegments - {JSON.stringify(demographicSegments, null, 2)}</p>
         <p>industries - {JSON.stringify(industries, null, 2)}</p>
