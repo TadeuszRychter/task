@@ -2,8 +2,10 @@ import React from 'react';
 import {Checkbox} from "@blueprintjs/core";
 import {itemSelector} from "./utils";
 
+export type OlListType = '1' | 'a' | 'A' | 'i' | 'I';
+
 interface DataGroupItemsProps {
-  listType: '1' | 'a' | 'A' | 'i' | 'I';
+  listType: OlListType;
   itemsList: string[];
   dataGroupName: string;
   selectedDataItems: string[];

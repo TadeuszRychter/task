@@ -7,7 +7,7 @@ import {ItemRenderer, MultiSelect as MultiSelectComponent} from "@blueprintjs/se
 import {MenuItem} from "@blueprintjs/core";
 import Widget from "./Widget";
 import DataGroupSelector from "./DataGroupSelector";
-import DataGroupItems from "./DataGroupItems";
+import DataGroupItems, {OlListType} from "./DataGroupItems";
 import {itemSelector} from "./utils";
 
 interface StsArrayItem {
@@ -60,16 +60,33 @@ function App() {
         <div>
           Select data:
           <ul>
-            <li>
-              <DataGroupSelector dataGroupName={'industry'} selectedDataGroups={selectedDataGroups} setSelectedDataGroups={setSelectedDataGroups} clearSelectedDataItems={clearSelectedDataItems}>
-                <DataGroupItems key={'industry'} listType={'A'} itemsList={industries} dataGroupName={'industry'} selectedDataItems={selectedDataItems} setSelectedDataItems={setSelectedDataItems} />
-              </DataGroupSelector>
+            {[
+              {
+                name: 'industry',
+                listType: 'A',
+                itemsList: industries
+              },
+              {
+                name: 'demography',
+                listType: 'I',
+                itemsList: demographicSegments
+              }
+            ].map(dataGroup => <li key={dataGroup.name}>
+                <DataGroupSelector
+                  dataGroupName={dataGroup.name}
+                  selectedDataGroups={selectedDataGroups}
+                  setSelectedDataGroups={setSelectedDataGroups}
+                  clearSelectedDataItems={clearSelectedDataItems}>
+                  <DataGroupItems
+                    key={dataGroup.name}
+                    dataGroupName={dataGroup.name}
+                    listType={dataGroup.listType as OlListType}
+                    itemsList={dataGroup.itemsList}
+                    selectedDataItems={selectedDataItems}
+                    setSelectedDataItems={setSelectedDataItems} />
+                </DataGroupSelector>
             </li>
-            <li>demography
-              <ol type="I">
-                {demographicSegments.map(segment => <li key={segment}>{segment}</li>)}
-              </ol>
-            </li>
+            )}
           </ul>
         </div>
         {selectedStates.map(state => <Widget twoLetterCode={state} />)}
