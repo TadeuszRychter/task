@@ -34,6 +34,11 @@ function App() {
 
   const [selectedStates, setSelectedStates] = useState<TwoLetterCode[]>([]);
   const [selectedDataGroups, setSelectedDataGroups] = useState<string[]>([]);
+  const [selectedDataItems, setSelectedDataItems] = useState<string[]>([]);
+
+  const clearSelectedDataItems = (groupName: string) => {
+    setSelectedDataItems(selectedDataItems.filter(dataItem => !dataItem.startsWith(`${groupName}_`)));
+  }
 
   const itemRenderer: ItemRenderer<StsArrayItem> = (stsArrayItem, {modifiers, handleClick}) => {
     if (!modifiers.matchesPredicate) {
@@ -60,10 +65,17 @@ function App() {
         <p>
           Select data:
           <ul>
-            <li>employment <Checkbox checked={selectedDataGroups.includes('employment')} large={true} onChange={() => itemSelector('employment', selectedDataGroups, setSelectedDataGroups)} />
-              <ol type="A">
-                {industries.map(industry => <li>{industry}</li>)}
-              </ol>
+            <li>industries <Checkbox checked={selectedDataGroups.includes('industries')} large={true} inline={true} onChange={() => {
+              itemSelector('industries', selectedDataGroups, setSelectedDataGroups);
+              if (selectedDataGroups.includes('industries')) {
+                clearSelectedDataItems('industries');
+              }
+            }} />
+              {selectedDataGroups.includes('industries') ?
+                <ol type="A">
+                  {industries.map(industry => <li>{industry} <Checkbox checked={selectedDataItems.includes(`industries_${industry}`)} large={true} inline={true} onChange={() => itemSelector(`industries_${industry}`, selectedDataItems, setSelectedDataItems)} /></li>)}
+                </ol>
+                : null }
             </li>
             <li>demography
               <ol type="I">
@@ -78,6 +90,7 @@ function App() {
         <p>industries - {JSON.stringify(industries, null, 2)}</p>
         <p>selected state - {JSON.stringify(selectedStates, null, 2)}</p>
         <p>selected data groups - {JSON.stringify(selectedDataGroups, null, 2)}</p>
+        <p>selected data items - {JSON.stringify(selectedDataItems, null, 2)}</p>
         <pre>stsArray - {JSON.stringify(stsArray[0], null, 2)}</pre>
         <pre>sts - {JSON.stringify(sts[Object.keys(sts)[0]], null, 2)}</pre>
         <pre>jbs - {JSON.stringify(jbs[0], null, 2)}</pre>
