@@ -1,23 +1,19 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import {sts} from "./data/s";
+import {jbs} from "./data/j";
+import {ppltn} from "./data/p";
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+          <p>{Object.values(sts)[4]}</p>
+          <p>{Object.keys(sts)[1]}</p>
+          <p>{jbs[1].agriculture}</p>
+          <pre>sts - {JSON.stringify(sts[Object.keys(sts)[0]], null, 2) }</pre>
+          <pre>jbs - {JSON.stringify(jbs[0], null, 2) }</pre>
+          <pre>ppltn - {JSON.stringify(ppltn[0], null, 2) }</pre>
       </header>
     </div>
   );
