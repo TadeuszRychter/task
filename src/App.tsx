@@ -1,11 +1,14 @@
-import React, {SetStateAction, useState} from 'react';
+import React, {useState} from 'react';
 import './App.css';
 import {FullStateName, sts, TwoLetterCode} from "./data/s";
 import {jbs} from "./data/j";
 import {ppltn} from "./data/p";
 import {ItemRenderer, MultiSelect as MultiSelectComponent} from "@blueprintjs/select";
-import {Checkbox, MenuItem} from "@blueprintjs/core";
+import {MenuItem} from "@blueprintjs/core";
 import Widget from "./Widget";
+import DataGroupSelector from "./DataGroupSelector";
+import DataGroupItems from "./DataGroupItems";
+import {itemSelector} from "./utils";
 
 interface StsArrayItem {
   twoLetterCode: TwoLetterCode;
@@ -21,14 +24,6 @@ const tagRenderer = (stsArrayItem: StsArrayItem) => stsArrayItem.twoLetterCode;
 const industries = Object.keys(jbs[0]).filter(key => key !== 'name');
 
 const demographicSegments = Object.keys(ppltn[0]).filter(key => key !== 'State');
-
-const itemSelector = (item: string, stateArray: string[], setStateFunction: any /*SetStateAction<string[]>*/) => {
-  if (stateArray.includes(item)) {
-    setStateFunction(stateArray.filter( state => state !== item));
-  } else {
-    setStateFunction([...stateArray, item])
-  }
-}
 
 function App() {
 
@@ -60,30 +55,23 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <p>Select states: <MultiSelect items={stsArray} itemRenderer={itemRenderer} onItemSelect={(item) => itemSelector(item.twoLetterCode, selectedStates, setSelectedStates)} tagRenderer={tagRenderer}/></p>
+        <div>Select states: <MultiSelect items={stsArray} itemRenderer={itemRenderer} onItemSelect={(item) => itemSelector(item.twoLetterCode, selectedStates, setSelectedStates)} tagRenderer={tagRenderer}/></div>
 
-        <p>
+        <div>
           Select data:
           <ul>
-            <li>industries <Checkbox checked={selectedDataGroups.includes('industries')} large={true} inline={true} onChange={() => {
-              itemSelector('industries', selectedDataGroups, setSelectedDataGroups);
-              if (selectedDataGroups.includes('industries')) {
-                clearSelectedDataItems('industries');
-              }
-            }} />
-              {selectedDataGroups.includes('industries') ?
-                <ol type="A">
-                  {industries.map(industry => <li>{industry} <Checkbox checked={selectedDataItems.includes(`industries_${industry}`)} large={true} inline={true} onChange={() => itemSelector(`industries_${industry}`, selectedDataItems, setSelectedDataItems)} /></li>)}
-                </ol>
-                : null }
+            <li>
+              <DataGroupSelector dataGroupName={'industry'} selectedDataGroups={selectedDataGroups} setSelectedDataGroups={setSelectedDataGroups} clearSelectedDataItems={clearSelectedDataItems}>
+                <DataGroupItems key={'industry'} listType={'A'} itemsList={industries} dataGroupName={'industry'} selectedDataItems={selectedDataItems} setSelectedDataItems={setSelectedDataItems} />
+              </DataGroupSelector>
             </li>
             <li>demography
               <ol type="I">
-                {demographicSegments.map(segment => <li>{segment}</li>)}
+                {demographicSegments.map(segment => <li key={segment}>{segment}</li>)}
               </ol>
             </li>
           </ul>
-        </p>
+        </div>
         {selectedStates.map(state => <Widget twoLetterCode={state} />)}
 
         <p>demographicSegments - {JSON.stringify(demographicSegments, null, 2)}</p>
