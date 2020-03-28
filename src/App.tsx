@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
+import React, {SetStateAction, useState} from 'react';
 import './App.css';
 import {FullStateName, sts, TwoLetterCode} from "./data/s";
 import {jbs} from "./data/j";
 import {ppltn} from "./data/p";
 import {ItemRenderer, MultiSelect as MultiSelectComponent} from "@blueprintjs/select";
-import {MenuItem} from "@blueprintjs/core";
+import {Checkbox, MenuItem} from "@blueprintjs/core";
 import Widget from "./Widget";
 
 interface StsArrayItem {
@@ -18,17 +18,22 @@ const stsArray = Object.entries(sts).map(([twoLetterCode, fullStateName]) => ({t
 
 const tagRenderer = (stsArrayItem: StsArrayItem) => stsArrayItem.twoLetterCode;
 
+const industries = Object.keys(jbs[0]).filter(key => key !== 'name');
+
+const demographicSegments = Object.keys(ppltn[0]).filter(key => key !== 'State');
+
+const itemSelector = (item: string, stateArray: string[], setStateFunction: any /*SetStateAction<string[]>*/) => {
+  if (stateArray.includes(item)) {
+    setStateFunction(stateArray.filter( state => state !== item));
+  } else {
+    setStateFunction([...stateArray, item])
+  }
+}
+
 function App() {
 
   const [selectedStates, setSelectedStates] = useState<TwoLetterCode[]>([]);
-
-  const onItemSelect = (stsArrayItem: StsArrayItem) => {
-    if (selectedStates.includes(stsArrayItem.twoLetterCode)) {
-      setSelectedStates(selectedStates.filter( state => state !== stsArrayItem.twoLetterCode));
-    } else {
-      setSelectedStates([...selectedStates, stsArrayItem.twoLetterCode])
-    }
-  }
+  const [selectedDataGroups, setSelectedDataGroups] = useState<string[]>([]);
 
   const itemRenderer: ItemRenderer<StsArrayItem> = (stsArrayItem, {modifiers, handleClick}) => {
     if (!modifiers.matchesPredicate) {
@@ -50,15 +55,30 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <MultiSelect items={stsArray} itemRenderer={itemRenderer} onItemSelect={onItemSelect} tagRenderer={tagRenderer}/>
+        <p>Select states: <MultiSelect items={stsArray} itemRenderer={itemRenderer} onItemSelect={(item) => itemSelector(item.twoLetterCode, selectedStates, setSelectedStates)} tagRenderer={tagRenderer}/></p>
 
+        <p>
+          Select data:
+          <ul>
+            <li>employment <Checkbox checked={selectedDataGroups.includes('employment')} large={true} onChange={() => itemSelector('employment', selectedDataGroups, setSelectedDataGroups)} />
+              <ol type="A">
+                {industries.map(industry => <li>{industry}</li>)}
+              </ol>
+            </li>
+            <li>demography
+              <ol type="I">
+                {demographicSegments.map(segment => <li>{segment}</li>)}
+              </ol>
+            </li>
+          </ul>
+        </p>
         {selectedStates.map(state => <Widget twoLetterCode={state} />)}
 
+        <p>demographicSegments - {JSON.stringify(demographicSegments, null, 2)}</p>
+        <p>industries - {JSON.stringify(industries, null, 2)}</p>
         <p>selected state - {JSON.stringify(selectedStates, null, 2)}</p>
-        <p>{Object.values(sts)[4]}</p>
-        <p>{Object.keys(sts)[1]}</p>
-        <p>{jbs[1].agriculture}</p>
-        <pre>stsArray - {JSON.stringify(stsArray, null, 2)}</pre>
+        <p>selected data groups - {JSON.stringify(selectedDataGroups, null, 2)}</p>
+        <pre>stsArray - {JSON.stringify(stsArray[0], null, 2)}</pre>
         <pre>sts - {JSON.stringify(sts[Object.keys(sts)[0]], null, 2)}</pre>
         <pre>jbs - {JSON.stringify(jbs[0], null, 2)}</pre>
         <pre>ppltn - {JSON.stringify(ppltn[0], null, 2)}</pre>
