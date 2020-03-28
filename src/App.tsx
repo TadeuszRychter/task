@@ -5,6 +5,7 @@ import {jbs} from "./data/j";
 import {ppltn} from "./data/p";
 import {ItemRenderer, MultiSelect as MultiSelectComponent} from "@blueprintjs/select";
 import {MenuItem} from "@blueprintjs/core";
+import Widget from "./Widget";
 
 interface StsArrayItem {
   twoLetterCode: TwoLetterCode;
@@ -50,6 +51,9 @@ function App() {
     <div className="App">
       <header className="App-header">
         <MultiSelect items={stsArray} itemRenderer={itemRenderer} onItemSelect={onItemSelect} tagRenderer={tagRenderer}/>
+
+        {selectedStates.map(state => <Widget twoLetterCode={state} />)}
+
         <p>selected state - {JSON.stringify(selectedStates, null, 2)}</p>
         <p>{Object.values(sts)[4]}</p>
         <p>{Object.keys(sts)[1]}</p>
