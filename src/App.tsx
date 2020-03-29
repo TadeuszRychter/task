@@ -102,6 +102,11 @@ function App() {
   const clearSelectedDataItems = (groupName: string) => {
     setSelectedDataItems(selectedDataItems.filter(dataItem => !dataItem.startsWith(`${groupName}_`)));
   }
+  const selectAllDataItems = (groupName: string) => {
+    setSelectedDataItems(
+      dataConfig.filter(config => config.name === groupName)[0].itemsList.map(key => `${groupName}_${key}`)
+    );
+  }
 
   return (
     <>
@@ -122,7 +127,9 @@ function App() {
                 dataGroupName={dataGroup.name}
                 selectedDataGroups={selectedDataGroups}
                 setSelectedDataGroups={setSelectedDataGroups}
-                clearSelectedDataItems={clearSelectedDataItems}>
+                clearSelectedDataItems={clearSelectedDataItems}
+                selectAllDataItems={selectAllDataItems}
+              >
                 <DataGroupItems
                   key={dataGroup.name}
                   dataGroupName={dataGroup.name}

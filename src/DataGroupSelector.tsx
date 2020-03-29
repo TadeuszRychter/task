@@ -7,10 +7,11 @@ interface DataGroupSelectorProps {
   selectedDataGroups: string[];
   setSelectedDataGroups: (items: string[]) => void;
   clearSelectedDataItems: (dataGroupName: string) => void;
+  selectAllDataItems: (dataGroupName: string) => void;
 }
 
 function DataGroupSelector(props: PropsWithChildren<DataGroupSelectorProps>) {
-  const {children, dataGroupName, selectedDataGroups, setSelectedDataGroups, clearSelectedDataItems} = props;
+  const {children, dataGroupName, selectedDataGroups, setSelectedDataGroups, clearSelectedDataItems, selectAllDataItems} = props;
 
   return <>
     {dataGroupName}
@@ -22,6 +23,8 @@ function DataGroupSelector(props: PropsWithChildren<DataGroupSelectorProps>) {
         itemSelector(dataGroupName, selectedDataGroups, setSelectedDataGroups);
         if (selectedDataGroups.includes(dataGroupName)) {
           clearSelectedDataItems(dataGroupName);
+        } else {
+          selectAllDataItems(dataGroupName)
         }
       }}
     />
