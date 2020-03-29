@@ -13,4 +13,9 @@ export const commonCss = {
   itemLeftMargin: style({
     marginLeft: '6px'
   }),
+  topRight: style({
+    position: 'absolute',
+    top: 0,
+    right: 0
+  }),
 }

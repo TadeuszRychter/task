@@ -4,9 +4,11 @@ import {pickColor} from "./utils"; // TODO figure out how to sue it with Chartis
 import ChartistGraph from "react-chartist";
 import {style} from "typestyle";
 import {commonCss} from "./common-styles";
+import {Button} from "@blueprintjs/core";
 
 interface WidgetProps {
   fullStateName: FullStateName;
+  remove: () => void;
   [key: string]: any; // TODO
 }
 
@@ -17,14 +19,21 @@ const css = {
     height: '100%',
     flexWrap: 'wrap',
     flexDirection: 'column',
-    border: '1px solid #ccc'
+    border: '1px solid #ccc',
+    position: 'relative'
   })
 }
 
 function Widget(props: WidgetProps) {
-  const {fullStateName, people, jobs} = props;
+  const {fullStateName, people, jobs, remove} = props;
 
   return <div className={css.dataWrapper}>
+    <Button
+      className={`${commonCss.itemLeftMargin} ${commonCss.topRight}`}
+      icon={'cross'}
+      onClick={remove}
+      minimal={true}
+    />
     <h1 className={commonCss.centerText}>{fullStateName}</h1>
 
     <div>{

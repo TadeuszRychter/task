@@ -3,7 +3,7 @@ import './App.css';
 import {FullStateName, sts, TwoLetterCode} from "./data/s";
 import {jbs} from "./data/j";
 import {ppltn} from "./data/p";
-import {NumericInput, Switch} from "@blueprintjs/core";
+import {Button, NumericInput, Switch} from "@blueprintjs/core";
 import Widget from "./Widget";
 import DataGroupSelector from "./DataGroupSelector";
 import DataGroupItems, {OlListType} from "./DataGroupItems";
@@ -11,6 +11,7 @@ import {createDataProps, itemSelector} from "./utils";
 import {commonCss} from "./common-styles";
 import {itemRendererWithState, MultiSelect, tagRenderer} from "./CodesMultiselectItems";
 import {css} from "./App.styles";
+import { filter } from 'fuzzaldrin-plus';
 
 export interface DataConfig {
   name: string;
@@ -23,6 +24,8 @@ export interface StsArrayItem {
   twoLetterCode: TwoLetterCode;
   fullStateName: FullStateName;
 }
+
+export const APP_DATA_SEPARATOR = '===';
 
 const stsArray = Object.entries(sts).map(([twoLetterCode, fullStateName]) => ({twoLetterCode, fullStateName}));// TODO keeping both for usage in fuzzy search in multiselect
 
@@ -52,6 +55,13 @@ function App() {
   const [selectedDataItems, setSelectedDataItems] = useState<string[]>([]); // only one level of nesting...
   const [numberOfColumns, setNumberOfColumns] = useState(2);
 
+  const selectAllStates = () => {
+    setSelectedStates(Object.keys(sts));
+  }
+  const clearStatesSelection = () => {
+    setSelectedStates([]);
+  }
+
   const clearSelectedDataItems = (groupName: string) => {
     setSelectedDataItems(selectedDataItems.filter(dataItem => !dataItem.startsWith(`${groupName}_`)));
   }
@@ -63,16 +73,42 @@ function App() {
     );
   }
 
+  const useFuzz = (query: string, items: string[]): string[] => {
+    if (!query) {
+      return items;
+    }
+    return filter(items, query);
+  }
+
   return (
     <>
       <div className={css.controlsWrapper}>
-        <div className={css.controlsWrapper}>Select states:
-          <MultiSelect
-            className={commonCss.itemLeftMargin}
-            items={stsArray}
-            itemRenderer={itemRendererWithState(selectedStates)}
-            onItemSelect={(item) => itemSelector(item.twoLetterCode, selectedStates, setSelectedStates)}
-            tagRenderer={tagRenderer}/>
+        <div className={css.controlsWrapper} style={{flexDirection: 'column'}}>Select states:
+            <MultiSelect
+              className={commonCss.itemLeftMargin}
+              items={stsArray.map( item => `${item.twoLetterCode}${APP_DATA_SEPARATOR}${item.fullStateName}`)}
+              itemRenderer={itemRendererWithState(selectedStates)}
+              onItemSelect={(item) => itemSelector(item.split(APP_DATA_SEPARATOR)[0], selectedStates, setSelectedStates)}
+              tagRenderer={tagRenderer}
+              itemListPredicate={useFuzz}
+              resetOnSelect={true}
+              noResults={'No results found'}
+              fill={true}
+            />
+            <div className={css.controlsWrapper}>
+              <Button
+                className={commonCss.itemLeftMargin}
+                disabled={selectedStates.length === Object.keys(sts).length}
+                text={'Select all'}
+                onClick={selectAllStates}
+              />
+              <Button
+                className={commonCss.itemLeftMargin}
+                disabled={selectedStates.length === 0}
+                text={'Clear selection'}
+                onClick={clearStatesSelection}
+              />
+            </div>
         </div>
 
         <div className={css.controlsWrapper}>
@@ -130,6 +166,7 @@ function App() {
           <Widget
             key={state}
             fullStateName={sts[state]}
+            remove={() => setSelectedStates(selectedStates.filter(s => s !== state))}
             {...createDataProps(dataConfig, state, selectedDataGroups, selectedDataItems)}
           />
         )
