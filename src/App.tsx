@@ -103,8 +103,10 @@ function App() {
     setSelectedDataItems(selectedDataItems.filter(dataItem => !dataItem.startsWith(`${groupName}_`)));
   }
   const selectAllDataItems = (groupName: string) => {
-    setSelectedDataItems(
-      dataConfig.filter(config => config.name === groupName)[0].itemsList.map(key => `${groupName}_${key}`)
+    setSelectedDataItems([
+        ...selectedDataItems,
+        ...dataConfig.filter(config => config.name === groupName)[0].itemsList.map(key => `${groupName}_${key}`)
+      ]
     );
   }
 

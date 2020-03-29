@@ -1,9 +1,7 @@
 import React from 'react';
 import {FullStateName} from "./data/s";
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-} from 'recharts';
-import {pickColor} from "./utils";
+import {pickColor} from "./utils"; // TODO figure out how to sue it with Chartist
+import ChartistGraph from "react-chartist";
 
 interface WidgetProps {
   fullStateName: FullStateName;
@@ -13,42 +11,53 @@ interface WidgetProps {
 function Widget(props: WidgetProps) {
   const {fullStateName, people, jobs} = props;
 
-  return <div style={{border: '1px solid green'}}>
-    <p>{fullStateName}</p>
+  return <div style={{border: '1px solid #ccc'}}>
+    <h1 style={{textAlign: 'center'}}>{fullStateName}</h1>
+
     <div>{
       people ?
         Object.keys(people).length ?
-          <>population - <pre>{JSON.stringify(people, null, 2)}</pre></>
+          <>
+            <h2 style={{textAlign: 'center'}}>People</h2>
+            <ChartistGraph
+              type={'Bar'}
+              data={{
+                labels: Object.keys(people),
+                series: [ Object.keys(people).map( key => people[key] ) ],
+                distributeSeries: true
+              }}
+              options={{
+                high: Math.max(...Object.keys(people).map( key => people[key] )),
+                low: Math.min(...Object.keys(people).map( key => people[key] )),
+              }}
+            />
+          </>
           : <>no population data</>
       : null
     }</div>
+
     <div>{
       jobs ?
         Object.keys(jobs).length ?
           <>
-            jobs - <pre>{JSON.stringify(jobs, null, 2)}</pre>
-            <ResponsiveContainer width="100%" height={200} debounce={1}>
-              <BarChart
-                data={Object.keys(jobs).map( key => ({ key, [key]: jobs[key]  }) ) }
-                margin={{
-                  top: 5, right: 30, left: 20, bottom: 5,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="key" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                {
-                  Object.keys(jobs).map( key => <Bar key={key} dataKey={key} fill={pickColor(key)} /> )
-                }
-
-              </BarChart>
-            </ResponsiveContainer>
+            <h2 style={{textAlign: 'center'}}>Jobs</h2>
+            <ChartistGraph
+              type={'Bar'}
+              data={{
+                labels: Object.keys(jobs),
+                series: [ Object.keys(jobs).map( key => jobs[key] ) ],
+                distributeSeries: true
+              }}
+              options={{
+                high: Math.max(...Object.keys(jobs).map( key => jobs[key] )),
+                low: Math.min(...Object.keys(jobs).map( key => jobs[key] )),
+              }}
+            />
           </>
           : <>no jobs data</>
       : null
     }</div>
+
   </div>
 }
 
