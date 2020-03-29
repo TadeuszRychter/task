@@ -9,6 +9,7 @@ import Widget from "./Widget";
 import DataGroupSelector from "./DataGroupSelector";
 import DataGroupItems, {OlListType} from "./DataGroupItems";
 import {itemSelector} from "./utils";
+import {style} from "typestyle";
 
 interface StsArrayItem {
   twoLetterCode: TwoLetterCode;
@@ -81,6 +82,25 @@ const dataConfig = [
     stateAlias: 'State'
   }
 ];
+/*
+*
+*
+.container {
+  justify-items: stretch;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto ;
+  grid-gap: 15px 10px;
+}
+*
+* */
+
+const widgetsWrapper = style({
+  display: 'grid',
+  justifyItems: 'stretch',
+  gridTemplateColumns: '1fr 1fr 1fr',
+  gridTemplateRows: 'auto',
+  gridGap: '15px',
+});
 
 function App() {
   const [selectedStates, setSelectedStates] = useState<TwoLetterCode[]>([]);
@@ -124,7 +144,7 @@ function App() {
         </ul>
       </div>
 
-      <div>
+      <div className={widgetsWrapper}>
       {selectedStates.length ?
         selectedStates.map(state =>
           <Widget
