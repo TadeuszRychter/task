@@ -32,7 +32,7 @@ function Widget(props: WidgetProps) {
               }}
             />
           </>
-          : <>no population data</>
+          : <p style={{textAlign: 'center'}}>no population data</p>
       : null
     }</div>
 
@@ -54,7 +54,7 @@ function Widget(props: WidgetProps) {
               }}
             />
           </>
-          : <>no jobs data</>
+          : <p style={{textAlign: 'center'}}>no jobs data</p>
       : null
     }</div>
 
