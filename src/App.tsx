@@ -4,7 +4,7 @@ import {FullStateName, sts, TwoLetterCode} from "./data/s";
 import {jbs} from "./data/j";
 import {ppltn} from "./data/p";
 import {ItemRenderer, MultiSelect as MultiSelectComponent} from "@blueprintjs/select";
-import {MenuItem} from "@blueprintjs/core";
+import {MenuItem, NumericInput, Switch} from "@blueprintjs/core";
 import Widget from "./Widget";
 import DataGroupSelector from "./DataGroupSelector";
 import DataGroupItems, {OlListType} from "./DataGroupItems";
@@ -82,22 +82,13 @@ const dataConfig = [
     stateAlias: 'State'
   }
 ];
-/*
-*
-*
-.container {
-  justify-items: stretch;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: auto ;
-  grid-gap: 15px 10px;
-}
-*
-* */
 
-const widgetsWrapper = style({
+const columns = (numberOfColumns: number) => ({ gridTemplateColumns: Array(numberOfColumns).fill('1fr').join(' ') });
+
+const widgetsWrapper = (numberOfColumns: number) => style(
+  columns(numberOfColumns),{
   display: 'grid',
   justifyItems: 'stretch',
-  gridTemplateColumns: '1fr 1fr 1fr',
   gridTemplateRows: 'auto',
   gridGap: '15px',
 });
@@ -106,6 +97,7 @@ function App() {
   const [selectedStates, setSelectedStates] = useState<TwoLetterCode[]>([]);
   const [selectedDataGroups, setSelectedDataGroups] = useState<string[]>([]);
   const [selectedDataItems, setSelectedDataItems] = useState<string[]>([]); // only one level of nesting...
+  const [numberOfColumns, setNumberOfColumns] = useState(2);
 
   const clearSelectedDataItems = (groupName: string) => {
     setSelectedDataItems(selectedDataItems.filter(dataItem => !dataItem.startsWith(`${groupName}_`)));
@@ -144,7 +136,20 @@ function App() {
         </ul>
       </div>
 
-      <div className={widgetsWrapper}>
+      <div>
+        Select number of widgets per row:
+        <NumericInput
+          onValueChange={(value) => setNumberOfColumns(value)}
+          large={true}
+          min={1}
+          max={selectedStates.length > 1 ? selectedStates.length : 2}
+          stepSize={1}
+          value={numberOfColumns}
+        />
+        <Switch checked={numberOfColumns === selectedStates.length} label="All" disabled={numberOfColumns === selectedStates.length} onChange={() => setNumberOfColumns(selectedStates.length)} />
+      </div>
+
+      <div className={widgetsWrapper(numberOfColumns)}>
       {selectedStates.length ?
         selectedStates.map(state =>
           <Widget
