@@ -1,6 +1,7 @@
 import React from 'react';
 import {Checkbox} from "@blueprintjs/core";
 import {itemSelector} from "./utils";
+import {commonCss} from "./common-styles";
 
 export type OlListType = '1' | 'a' | 'A' | 'i' | 'I';
 
@@ -20,6 +21,7 @@ function DataGroupItems(props: DataGroupItemsProps) {
       <li key={`${dataGroupName}_${item}`}>
         {item}
         <Checkbox
+          className={commonCss.itemLeftMargin}
           large={true}
           inline={true}
           checked={selectedDataItems.includes(`${dataGroupName}_${item}`)}

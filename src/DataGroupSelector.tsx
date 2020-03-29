@@ -1,6 +1,7 @@
 import React, {PropsWithChildren} from 'react';
 import {Checkbox} from "@blueprintjs/core";
 import {itemSelector} from "./utils";
+import {commonCss} from "./common-styles";
 
 interface DataGroupSelectorProps {
   dataGroupName: string;
@@ -16,6 +17,7 @@ function DataGroupSelector(props: PropsWithChildren<DataGroupSelectorProps>) {
   return <>
     {dataGroupName}
     <Checkbox
+      className={commonCss.itemLeftMargin}
       checked={selectedDataGroups.includes(dataGroupName)}
       large={true}
       inline={true}

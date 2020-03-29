@@ -10,6 +10,7 @@ import DataGroupSelector from "./DataGroupSelector";
 import DataGroupItems, {OlListType} from "./DataGroupItems";
 import {itemSelector} from "./utils";
 import {style} from "typestyle";
+import {commonCss} from "./common-styles";
 
 interface StsArrayItem {
   twoLetterCode: TwoLetterCode;
@@ -85,13 +86,19 @@ const dataConfig = [
 
 const columns = (numberOfColumns: number) => ({ gridTemplateColumns: Array(numberOfColumns).fill('1fr').join(' ') });
 
-const widgetsWrapper = (numberOfColumns: number) => style(
-  columns(numberOfColumns),{
-  display: 'grid',
-  justifyItems: 'stretch',
-  gridTemplateRows: 'auto',
-  gridGap: '15px',
-});
+const css = {
+  widgetsWrapper: (numberOfColumns: number) => style(
+    columns(numberOfColumns),{
+      display: 'grid',
+      justifyItems: 'stretch',
+      gridTemplateRows: 'auto',
+      gridGap: '15px',
+    }),
+  controlsWrapper: `${style({
+    display: 'flex',
+    flexWrap: 'wrap',
+  })} ${commonCss.padding}`
+}
 
 function App() {
   const [selectedStates, setSelectedStates] = useState<TwoLetterCode[]>([]);
@@ -112,53 +119,65 @@ function App() {
 
   return (
     <>
-      <div>Select states:
-        <MultiSelect
-          items={stsArray}
-          itemRenderer={itemRendererWithState(selectedStates)}
-          onItemSelect={(item) => itemSelector(item.twoLetterCode, selectedStates, setSelectedStates)}
-          tagRenderer={tagRenderer}/>
-      </div>
+      <div className={css.controlsWrapper}>
+        <div className={css.controlsWrapper}>Select states:
+          <MultiSelect
+            className={commonCss.itemLeftMargin}
+            items={stsArray}
+            itemRenderer={itemRendererWithState(selectedStates)}
+            onItemSelect={(item) => itemSelector(item.twoLetterCode, selectedStates, setSelectedStates)}
+            tagRenderer={tagRenderer}/>
+        </div>
 
-      <div>
-        Select data:
-        <ul>
-          {dataConfig.map(dataGroup =>
-            <li key={dataGroup.name}>
-              <DataGroupSelector
-                dataGroupName={dataGroup.name}
-                selectedDataGroups={selectedDataGroups}
-                setSelectedDataGroups={setSelectedDataGroups}
-                clearSelectedDataItems={clearSelectedDataItems}
-                selectAllDataItems={selectAllDataItems}
-              >
-                <DataGroupItems
-                  key={dataGroup.name}
+        <div className={css.controlsWrapper}>
+          Select data:
+          <ul className={css.controlsWrapper}>
+            {dataConfig.map(dataGroup =>
+              <li key={dataGroup.name}>
+                <DataGroupSelector
                   dataGroupName={dataGroup.name}
-                  listType={dataGroup.listType as OlListType}
-                  itemsList={dataGroup.itemsList}
-                  selectedDataItems={selectedDataItems}
-                  setSelectedDataItems={setSelectedDataItems}/>
-              </DataGroupSelector>
-            </li>
-          )}
-        </ul>
+                  selectedDataGroups={selectedDataGroups}
+                  setSelectedDataGroups={setSelectedDataGroups}
+                  clearSelectedDataItems={clearSelectedDataItems}
+                  selectAllDataItems={selectAllDataItems}
+                >
+                  <DataGroupItems
+                    key={dataGroup.name}
+                    dataGroupName={dataGroup.name}
+                    listType={dataGroup.listType as OlListType}
+                    itemsList={dataGroup.itemsList}
+                    selectedDataItems={selectedDataItems}
+                    setSelectedDataItems={setSelectedDataItems}/>
+                </DataGroupSelector>
+              </li>
+            )}
+          </ul>
+        </div>
+
+        <div className={css.controlsWrapper}>
+          Select number of widgets per row:
+          <div style={{display: 'block' /* NumericInput needs such parent */}}>
+          <NumericInput
+            className={commonCss.itemLeftMargin}
+            onValueChange={(value) => setNumberOfColumns(value)}
+            large={true}
+            min={1}
+            max={selectedStates.length > 1 ? selectedStates.length : 2}
+            stepSize={1}
+            value={numberOfColumns}
+          />
+          </div>
+          <Switch
+            className={commonCss.itemLeftMargin}
+            checked={numberOfColumns === selectedStates.length}
+            label="All"
+            disabled={numberOfColumns === selectedStates.length}
+            onChange={() => setNumberOfColumns(selectedStates.length)}
+          />
+        </div>
       </div>
 
-      <div>
-        Select number of widgets per row:
-        <NumericInput
-          onValueChange={(value) => setNumberOfColumns(value)}
-          large={true}
-          min={1}
-          max={selectedStates.length > 1 ? selectedStates.length : 2}
-          stepSize={1}
-          value={numberOfColumns}
-        />
-        <Switch checked={numberOfColumns === selectedStates.length} label="All" disabled={numberOfColumns === selectedStates.length} onChange={() => setNumberOfColumns(selectedStates.length)} />
-      </div>
-
-      <div className={widgetsWrapper(numberOfColumns)}>
+      <div className={css.widgetsWrapper(numberOfColumns)}>
       {selectedStates.length ?
         selectedStates.map(state =>
           <Widget
@@ -167,7 +186,7 @@ function App() {
             {...createDataProps(state, selectedDataGroups, selectedDataItems)}
           />
         )
-        : <>no states selected</>
+        : <p className={`${commonCss.centerText} ${commonCss.noData}`}>no states selected</p>
       }
       </div>
 

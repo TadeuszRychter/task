@@ -2,23 +2,36 @@ import React from 'react';
 import {FullStateName} from "./data/s";
 import {pickColor} from "./utils"; // TODO figure out how to sue it with Chartist
 import ChartistGraph from "react-chartist";
+import {style} from "typestyle";
+import {commonCss} from "./common-styles";
 
 interface WidgetProps {
   fullStateName: FullStateName;
   [key: string]: any; // TODO
 }
 
+const css = {
+  dataWrapper: style({
+    display: 'flex',
+    justifyContent: 'flex-start',
+    height: '100%',
+    flexWrap: 'wrap',
+    flexDirection: 'column',
+    border: '1px solid #ccc'
+  })
+}
+
 function Widget(props: WidgetProps) {
   const {fullStateName, people, jobs} = props;
 
-  return <div style={{border: '1px solid #ccc'}}>
-    <h1 style={{textAlign: 'center'}}>{fullStateName}</h1>
+  return <div className={css.dataWrapper}>
+    <h1 className={commonCss.centerText}>{fullStateName}</h1>
 
     <div>{
       people ?
         Object.keys(people).length ?
           <>
-            <h2 style={{textAlign: 'center'}}>People</h2>
+            <h2 className={commonCss.centerText}>People</h2>
             <ChartistGraph
               type={'Bar'}
               data={{
@@ -32,7 +45,7 @@ function Widget(props: WidgetProps) {
               }}
             />
           </>
-          : <p style={{textAlign: 'center'}}>no population data</p>
+          : <p className={`${commonCss.centerText} ${commonCss.noData}`}>no population data</p>
       : null
     }</div>
 
@@ -40,7 +53,7 @@ function Widget(props: WidgetProps) {
       jobs ?
         Object.keys(jobs).length ?
           <>
-            <h2 style={{textAlign: 'center'}}>Jobs</h2>
+            <h2 className={commonCss.centerText}>Jobs</h2>
             <ChartistGraph
               type={'Bar'}
               data={{
@@ -54,7 +67,7 @@ function Widget(props: WidgetProps) {
               }}
             />
           </>
-          : <p style={{textAlign: 'center'}}>no jobs data</p>
+          : <p className={`${commonCss.centerText} ${commonCss.noData}`}>no jobs data</p>
       : null
     }</div>
 
